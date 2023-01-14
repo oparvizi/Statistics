@@ -846,3 +846,50 @@ plot(x, y, ylab="Relative FoI", xlab="Age", type="l", ylim=c(0,0.25), xlim=c(0,8
 
 ```
 #########################################################
+# Calculate R0 
+
+#The next-generation matrix s the general approach that work for all compartmental models of any complexity:
+#1. Identify all n infected compartments, 
+#2. Construct a n×1 matrix, F, that contains expressions for all completely new infections entering each infected compartment, 
+#3. Construct a n×1 matrix, V−, that contains expressions for all losses out of each infected compartment, 
+#4. Construct a n×1 matrix, V+, that contains expressions for all gains into each infected compartment that does not represent new infections but transfers among infectious classes, 
+#5. Construct a n×1 matrix, V = V−  −  V+, 
+#6. Generate two n×n Jacobian matrices f and v that are the partial derivatives of F and V with respect to the n infectious state variables, 
+#7. Evaluate the matrices at the disease free equilibrium (dfe), and ﬁnally 
+#8. R0 is the greatest eigenvalue of fv−1|dfe.
+
+##################################################################
+# SEIR
+```{r}
+#Step 1: Infected classes are E and I, let us label them 1 and 2.
+#Step 2: All new infections: dE/dt = β SI/N, dI/dt = 0
+F1 = quote(beta * S * I/N) 
+F2 = 0
+#Step 3: All losses dE/dt =( μ+σ )E, dI/dt =( μ+α+γ )I
+Vm1 = quote(mu * E + sigma * E) 
+Vm2 = quote(mu * I + alpha * I + gamma * I)
+#Step 4: All gained transfers dE/dt = 0, dI/dt =( σ )E
+Vp1 = 0 
+Vp2 = quote(sigma * E)
+#Step 5: Subtract Vp from Vm
+V1 = substitute(a - b, list(a = Vm1, b = Vp1)) 
+V2 = substitute(a - b, list(a = Vm2, b = Vp2))
+#Step 6: Generate the partial derivatives for the two Jacobians
+f11 = D(F1, "E"); f12 = D(F1, "I") 
+f21 = D(F2, "E"); f22 = D(F2, "I")
+v11 = D(V1, "E"); v12 = D(V1, "I") 
+v21 = D(V2, "E"); v22 = D(V2, "I")
+#Step 7: Assuming N=1, the disease free equilibrium (dfe) is S = 1,E = 0,I = 0,R = 0. We also need values for other parameters. Assuming a weekly time-step and something chickenpox-like we may use μ = 0, α = 0, β = 5, γ = .8, σ = 1.2, and N = 1.
+paras=list(S=1, E=0, I=0, R=0, mu=0, alpha=0, beta=5, gamma=.8, sigma=1.2, N=1)
+f=with(paras, matrix(c(eval(f11),eval(f12),
+                       eval(f21), eval(f22)), nrow=2, byrow=TRUE))
+v=with(paras, matrix(c(eval(v11),eval(v12),
+                       eval(v21), eval(v22)), nrow=2, byrow=TRUE))
+#Step8: Calculate the largest eigenvalue of f ×inverse(v). Note that the function for inverting matrices in R is solve.
+cat('Next generation method: ')
+max(eigen(f %*% solve(v))$values)
+#Letuscheckthatthenext-generationmethodandthe“ﬂow”methodareinagreement recalling that for the SEIR-ﬂow R0 = (σ/σ+μ)(β/γ+μ+α).
+cat('SEIR-ﬂow:               ')
+with(paras, sigma/(sigma + mu) * beta/(gamma + mu + alpha))
+
+```
