@@ -1,0 +1,10 @@
+# Strategies for Finding and Interpreting Data Anomalies
+
+# Separating the Anomalies
+1. Create alerts
+
+2. Profile normal behavior
+
+3. Include anomaly detection in every aspect of research
+
+4. Make sure your data scientists are on the lookout
