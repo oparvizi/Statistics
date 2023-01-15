@@ -2,6 +2,8 @@
 title: "StatisticsR"
 output: html_document
 date: "2023-01-15"
+source: https://global.oup.com/academic/product/applied-statistics-with-r-9780198869337?cc=de&lang=en&
+source: https://link.springer.com/book/10.1007/978-3-319-14093-3
 source: https://link.springer.com/book/10.1007/978-1-4842-0139-8
 ---
 
