@@ -19,10 +19,9 @@
 
 % Computational Statistics Toolbox:
 
-
-% Example: Suppose there is a 20% chance that an adult American suffers from a psychiatric disorder.
-% We randomly sample 25 adult Americans.
-
+% Common Distributions-----------------------------
+% Binomial---------
+% Example: Suppose there is a 20% chance that an adult American suffers from a psychiatric disorder. % We randomly sample 25 adult Americans.
 prob = binocdf(3,25,0.2);
 prob2 = sum(binopdf(0:3,25,0.2));
 
@@ -42,6 +41,38 @@ subplot(1,2,2),bar(x,pdf2,1,'w')
 title(' n = 6, p = 0.7')
 xlabel('X'),ylabel('f(X)')
 axis square
+
+% Poisson-----------
+% Example: In preparing this text, we executed the spell check command, and the editor reviewed the manuscript for typographical errors. In spite of this, some
+% mistakes might be present. Assume that the number of typographical errors per page follows the Poisson distribution with parameter We calculate the 
+% probability that a page will have at least two errors as follows:
+
+prob = 1-poisscdf(1,0.25);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
