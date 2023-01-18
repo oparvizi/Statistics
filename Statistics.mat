@@ -20,7 +20,7 @@
 #% Computational Statistics Toolbox:
 
 #% Common Distributions-----------------------------
-#% Binomial---------
+#% Binomial-----------------------------------------
 #% Example: Suppose there is a 20% chance that an adult American suffers from a psychiatric disorder. % We randomly sample 25 adult Americans.
 prob = binocdf(3,25,0.2);
 prob2 = sum(binopdf(0:3,25,0.2));
@@ -42,38 +42,205 @@ title(' n = 6, p = 0.7')
 xlabel('X'),ylabel('f(X)')
 axis square
 
-#% Poisson-----------
+#% Poisson---------------------------------------------
 #% Example: In preparing this text, we executed the spell check command, and the editor reviewed the manuscript for typographical errors. In spite of this, some
 #% mistakes might be present. Assume that the number of typographical errors per page follows the Poisson distribution with parameter We calculate the 
 #% probability that a page will have at least two errors as follows:
-
 prob = 1-poisscdf(1,0.25);
 
+#% Example: Suppose that accidents at a certain intersection occur in a manner that satisfies the conditions for a Poisson process with a rate of 2 per week
+(lambda=2 ). What is the probability that at most 3 accidents will occur during the next 2 weeks?
+prob = poisscdf(3,2*2);
 
+#% Uniform----------------------------------------------
+#% Example: In this example, we illustrate the uniform probability density function over the interval (0, 10), along with the corresponding cumulative distribution
+function.
+#% First get the domain over which we will 
+#% evaluate the functions.
+x = -1:.1:11;
+% Now get the probability density function
+#% values at x.
+pdf = unifpdf(x,0,10);
+#% Now get the cdf.
+cdf = unifcdf(x,0,10);
 
+#% Do the plots.
+subplot(1,2,1),plot(x,pdf)
+title('PDF')
+xlabel('X'),ylabel('f(X)')
+axis([-1 11 0 0.2])
+axis square
+subplot(1,2,2),plot(x,cdf)
+title('CDF')
+xlabel('X'),ylabel('F(X)')
+axis([-1 11 0 1.1])
+axis square
+#% Normal-------------------------------------------------
+#% Set up the parameters for the normal distribution.
+mu = 5;
+sigma = 2;
+#% Set up the upper and lower limits. These are in 
+#% the two element vector 'specs'.
+specs = [2, 8];
+prob = normspec(specs, mu, sigma);
 
+#% Exponential---------------------------------------------
+#% The time between arrivals of vehicles at an intersection follows an exponential distribution with a mean of 12 seconds. What is the probability that the time between arrivals is 10 seconds or less?
+#% average interarrival time, so lambda=1/12. 
+expcdf(x, 1/lambda)
+csexpoc(x, lambda)
 
+#% Gamma---------------------------------------------------
+#% Example: We plot the gamma probability density function for lambda=t=1 (this should look like the exponential), lambda=t=2 , and lambda=t=3. 
+#% First get the domain over which to 
+% evaluate the functions.
+x = 0:.1:3;
+% Now get the functions values for
+#% different values of lambda.
+y1 = gampdf(x,1,1/1);
+y2 = gampdf(x,2,1/2);
+y3 = gampdf(x,3,1/3);
+#% Plot the functions.
+plot(x,y1,'r',x,y2,'g',x,y3,'b')
+title('Gamma Distribution')
+xlabel('X')
+ylabel('f(x)')
 
+#% Chi-Square ---------------------------------------------
 
+#% Weibull-------------------------------------------------
+#% Example: Suppose the time to failure of piston rings for stream-driven compressors can be modeled by the Weibull distribution with a location parameter of zero, β= 1/3, and α = 500.
+weibcdf(x,α^−β,β)
+csweibc(x,ν, α, β)
 
+#% Beta----------------------------------------------------
+#% We use the following MATLAB code to plot the beta density over the interval (0,1). First get the domain over which to evaluate
+#% the density function.
+x = 0.01:.01:.99;
+% Now get the values for the density function.
+y1 = betapdf(x,0.5,0.5);
+y2 = betapdf(x,3,3);
+#% Plot the results.
+plot(x,y1,'r',x,y2,'g')
+title('Beta Distribution')
+xlabel('x')
+ylabel('f(x)')
 
+#% Student’s t Distribution--------------------------------
+#% First we get the domain for the function.
+x = -6:.01:6;
+#% Now get the values for the density function.
+y = tpdf(x,5);
+#% Plot the results.
+plot(x,y)
+xlabel('x')
+ylabel('f(x)')
 
+#% Multivariate Normal (mvnpdf)----------------------------
+function prob = csevalnorm(x,mu,cov_mat);
+[n,d] = size(x);
+#% center the data points
+x = x-ones(n,1)*mu; 
+a = (2*pi)^(d/2)*sqrt(det(cov_mat));
+arg = diag(x*inv(cov_mat)*x');
+prob = exp((-.5)*arg);
+prob = prob/a;
 
+#% Get the mean and covariance.
+mu = zeros(1,2);
+cov_mat = eye(2);% Identity matrix
+#% Get the domain.
+% Should range (-4,4) in both directions.
+[x,y] = meshgrid(-4:.2:4,-4:.2:4);
+#% Reshape into the proper format for the function.
+X = [x(:),y(:)];
+Z = csevalnorm(X,mu,cov_mat);
+#% Now reshape the matrix for plotting.
+z = reshape(Z,size(x));
+subplot(1,2,1) % plot the surface
+surf(x,y,z),axis square, axis tight
+title('BIVARIATE STANDARD NORMAL')
 
+subplot(1,2,2) % look down on the surface
+pcolor(x,y,z),axis square
+title('BIVARIATE STANDARD NORMAL')
+#% Now do the same thing for a covariance matrix with non-zero off-diagonal elements.
+cov_mat = [1 0.7 ; 0.7 1];
+Z = csevalnorm(X,mu,cov_mat);
+z = reshape(Z,size(x));
+subplot(1,2,1)
+surf(x,y,z),axis square, axis tight
+title('BIVARIATE NORMAL')
+subplot(1,2,2)
+pcolor(x,y,z),axis square
+title('BIVARIATE NORMAL')
 
+#% Multivariate t Distribution-----------------------------
+#% First set up a correlation matrix with high negative correlation.
+Rneg = [1, -0.8; -0.8, 1];
+nu = 5;
+#% Get the domain for the pdf.
+x = -4:.1:4; 
+y = -4:.1:4;
+[X,Y] = meshgrid(x,y);
+#% Evaluate the pdf.
+z = mvtpdf([X(:) Y(:)],Rneg,nu);
+#% Reshape to a matrix and plot.
+z = reshape(z,length(x),length(y));
+surf(x,y,z);
+xlabel('x'); 
+ylabel('y'); 
+zlabel('f(x,y)');
+axis tight
 
+#% List of Functions--------------------------------------
+#% Distribution               MATLAB Function
+#% Beta                       csbetap
+#%                            csbetac
+#% Binomial                   csbinop
+#%                            csbinoc
+#% Chi-square                 cschip
+#%                            cschic
+#% Exponential                csexpop
+#%                            csexpoc
+#% Gamma                      csgammp
+#%                            csgammc
+#% Normal – univariate        csnormp
+#%                            csnormc
+#% Normal – multivariate      csevalnorm
+#% Poisson                    cspoisp
+#%                            cspoisc
+#% Continuous uniform         csunifp
+#%                            csunifc
+#% Weibull                    csweibp
+#%                            csweibc
 
+#% Sampling Concepts-------------------------------------
+#% types of simple random sampling: sampling with replacement and sampling without replacement.
+mean(x,dim)
+std(x)
+var(x)
+#% Sample Moments----------------------------
+#% Example: In this example, we will generate a random sample that is uniformly distributed over the interval (0, 1). We would expect this sample to have a
+#% coefficient of skewness close to zero because it is a symmetric distribution. We would expect the kurtosis to be different from 3 because the random
+#% sample is not generated from a normal distribution. 
+#% Generate a random sample from the uniform distribution.
+n = 2000;
+x = rand(1,n);
+#% Find the mean of the sample.
+mu = mean(x);
+% Find the numerator and denominator for gamma_1.
+num = (1/n)*sum((x-mu).^3);
+den = (1/n)*sum((x-mu).^2);
+gam1 = num/den^(3/2);
 
+#% Find the kurtosis.
+num = (1/n)*sum((x-mu).^4);
+den = (1/n)*sum((x-mu).^2);
+gam2 = num/den^2;
 
-
-
-
-
-
-
-
-
-
+#% Covariance---------------------------------
+#%page 60
 
 
 
