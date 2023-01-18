@@ -1,38 +1,38 @@
-%-----------Computational Statistics Handbook with MATLAB® Third Edition
-% Source: https://www.routledge.com/Computational-Statistics-Handbook-with-MATLAB/Martinez-Martinez/p/book/9781032179582
+#%-----------Computational Statistics Handbook with MATLAB® Third Edition
+#% Source: https://www.routledge.com/Computational-Statistics-Handbook-with-MATLAB/Martinez-Martinez/p/book/9781032179582
 
-# Comparison Between Traditional Statistics and Computational Statistics
-# Traditional Statistics                                Computational Statistics
-% Small to moderate sample size                         Large to very large sample size
-% Independent, identically distributed data sets        Nonhomogeneous data sets
-% One or low dimensional                                High dimensional
-% Manually computational                                Computationally intensive
-% Mathematically tractable                              Numerically tractable
-% Well focused questions                                Imprecise questions
-% Strong unverifiable assumptions:                      Weak or no assumptions:
-%        Relationships (linearity,                      Relationships (nonlinearity)
-%        additivity)                                    Error structures (distribution free)
-% Error structures (normality)
-% Statistical inference                                 Structural inference
-% Predominantly closed form algorithms                  Iterative algorithms possible
-% Statistical optimality                                Statistical robustness
+#% Comparison Between Traditional Statistics and Computational Statistics
+#% Traditional Statistics                                Computational Statistics
+#% Small to moderate sample size                         Large to very large sample size
+#% Independent, identically distributed data sets        Nonhomogeneous data sets
+#% One or low dimensional                                High dimensional
+#% Manually computational                                Computationally intensive
+#% Mathematically tractable                              Numerically tractable
+#% Well focused questions                                Imprecise questions
+#% Strong unverifiable assumptions:                      Weak or no assumptions:
+#%        Relationships (linearity,                      Relationships (nonlinearity)
+#%        additivity)                                    Error structures (distribution free)
+#% Error structures (normality)
+#% Statistical inference                                 Structural inference
+#% Predominantly closed form algorithms                  Iterative algorithms possible
+#% Statistical optimality                                Statistical robustness
 
-% Computational Statistics Toolbox:
+#% Computational Statistics Toolbox:
 
-% Common Distributions-----------------------------
-% Binomial---------
-% Example: Suppose there is a 20% chance that an adult American suffers from a psychiatric disorder. % We randomly sample 25 adult Americans.
+#% Common Distributions-----------------------------
+#% Binomial---------
+#% Example: Suppose there is a 20% chance that an adult American suffers from a psychiatric disorder. % We randomly sample 25 adult Americans.
 prob = binocdf(3,25,0.2);
 prob2 = sum(binopdf(0:3,25,0.2));
 
-% Get the values for the domain, x.
+#% Get the values for the domain, x.
 x = 0:6;
-% Get the values of the probability mass function.
-% First for n = 6, p = 0.3:
+#% Get the values of the probability mass function.
+#% First for n = 6, p = 0.3:
 pdf1 = binopdf(x,6,0.3);
-% Now for n = 6, p = 0.7:
+#% Now for n = 6, p = 0.7:
 pdf2 = binopdf(x,6,0.7);
-% Do the plots.
+#% Do the plots.
 subplot(1,2,1),bar(x,pdf1,1,'w')
 title(' n = 6, p = 0.3')
 xlabel('X'),ylabel('f(X)')
@@ -42,10 +42,10 @@ title(' n = 6, p = 0.7')
 xlabel('X'),ylabel('f(X)')
 axis square
 
-% Poisson-----------
-% Example: In preparing this text, we executed the spell check command, and the editor reviewed the manuscript for typographical errors. In spite of this, some
-% mistakes might be present. Assume that the number of typographical errors per page follows the Poisson distribution with parameter We calculate the 
-% probability that a page will have at least two errors as follows:
+#% Poisson-----------
+#% Example: In preparing this text, we executed the spell check command, and the editor reviewed the manuscript for typographical errors. In spite of this, some
+#% mistakes might be present. Assume that the number of typographical errors per page follows the Poisson distribution with parameter We calculate the 
+#% probability that a page will have at least two errors as follows:
 
 prob = 1-poisscdf(1,0.25);
 
