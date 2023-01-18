@@ -1,8 +1,8 @@
 %-----------Computational Statistics Handbook with MATLAB® Third Edition
 % Source: https://www.routledge.com/Computational-Statistics-Handbook-with-MATLAB/Martinez-Martinez/p/book/9781032179582
 
-% Comparison Between Traditional Statistics and Computational Statistics
-% Traditional Statistics                                Computational Statistics
+# Comparison Between Traditional Statistics and Computational Statistics
+# Traditional Statistics                                Computational Statistics
 % Small to moderate sample size                         Large to very large sample size
 % Independent, identically distributed data sets        Nonhomogeneous data sets
 % One or low dimensional                                High dimensional
