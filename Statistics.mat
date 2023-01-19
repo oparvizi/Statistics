@@ -240,8 +240,372 @@ den = (1/n)*sum((x-mu).^2);
 gam2 = num/den^2;
 
 #% Covariance---------------------------------
-#%page 60
+#% First load the data.
+load cement
+#% Now get the transformations.
+xr = 1./x;
+logy = log(y);
+#% Now get a scatterplot of the data to see if the relationship is linear.
+plot(xr,logy,'x')
+axis([0 1.1 2.4 4])
+xlabel('Reciprocal of Drying Time')
+ylabel('Log of Tensile Strength')
+#% Now get the covariance and the correlation coefficient.
+cmat = cov(xr,logy);
+cormat = corrcoef(xr,logy);
 
+% Sampling Distributions-----------------------
+#% CENTRAL LIMIT THEOREM----------
+#% Let represent a probability density with finite variance (Sigma^2) and mean . Also, let X be the sample mean for a random sample of size n drawn from this distribution.
+#% For large n, the distribution of X is approximately normally distributed with mean and variance given by sigma^2/n.
+
+#% Parameter Estimation: maximum likelihood estimation, Bayes estimators, minimax estimation, Pitman estimators, interval estimates, robust estimation
+#% Suggested Point Estimators for Parameters
+#% Distribution           Suggested           Estimator MATLAB Function
+#% Binomial               Page 73             csbinpar
+#% Exponential                                csexpar
+#% Gamma                                      csgampar
+#% Normal                                     mean, var
+#% Multivariate normal                        mean, cov
+#% Poisson                                    cspoipar
+
+#% Empirical Distribution Function------------------------
+#% Quantiles----------------------------------------------
+% #Generate the random sample and sort.
+x = sort(rand(1,100));
+#% Find the median of the lower half - first quartile.
+q1 = median(x(1:50)); 
+#% Find the median.
+q2 = median(x);
+#% Find the median of the upper half - third quartile.
+q3 = median(x(51:100));
+
+#% interp1------------------------------------------------
+#% general syntax is: yint = interp1(xobs, yobs, xint);
+#% First generate some standard normal data.
+x = randn(500,1);
+#% Now get the order statistics. These will serve as the observed values for the ordinate (Y_obs).
+xs = sort(x);
+#% Now get the observed values for the abscissa (X_obs).
+n=length(x);
+phat = ((1:n)-0.5)/n;
+#% We want to get the quartiles.
+p = [0.25, 0.5, 0.75];
+#% The following provides the estimates of the quartiles using linear interpolation.
+qhat = interp1(phat,xs,p);
+
+% List of MATLAB functions for calculating statistics--------------------------------
+#% Purpose                                      MATLAB Function
+#% standard MATLAB package                      mean, var, std, cov, median, corrcoef, max, min, sort
+#% MATLAB Statistics Toolbox                    harmmean, iqr, kurtosis, mad, moment, prctile, range, skewness, trimmean
+#% Statistics Toolbox functions provide         betafit, binofit, expfit, gamfit, normfit, poissfit, weibfit, unifit, mle
+#% the maximum likelihood estimates for 
+#% distributions.
+#% used to obtain parameter estimates for       csbinpar, csexpar, csgampar, cspoipar, csunipar
+#% a distribution.
+#% return the quantiles.                        csbinoq, csexpoq, csunifq, csweibq, csnormq, csquantiles
+#% descriptive statistics                       csmomentc, cskewness, cskurtosis, csmoment, csecdf
+
+% Generating Random Variables---------------------------------------------
+#% General Techniques: Uniform Random Numbers: uniformly distributed on the interval (0,1).
+rng(seed)
+rng('default')
+
+#% Obtain a vector of uniform random variables in (0,1).
+x = rand(1,1000);
+#% Do a histogram to plot.First get the height of the bars.
+[N,X] = hist(x,15);
+#% Use the bar function to see the distribution.
+bar(X,N,1,'w')
+title('Histogram of Uniform Random Variables')
+xlabel('X')
+ylabel('Frequency') 
+
+#% Generate 3 random samples of size 5.
+x = zeros(3,5); % Allocate the memory.
+for i = 1:3
+ rng(i) % set the seed
+ x(i,:) = rand(1,5);
+end
+#% recover the five random variables generated in the second
+sample
+rng(2)
+xt = rand(1,5);
+
+% Inverse Transform Method--------------
+
+#% Set up storage space for the variables.
+n = 1000;
+X = zeros(1,n);
+#% These are the x's in the domain:
+x = 0:2; 
+#% These are the probability masses for each x:
+pr = [0.3 0.2 0.5]; 
+#% Generate 1000 random variables from the desired distribution.
+for i = 1:n
+ u = rand; % Generate the U.
+ if u <= pr(1)
+ X(i) = x(1);
+ elseif u <= sum(pr(1:2)) 
+#% It has to be between 0.3 and 0.5.
+ X(i) = x(2);
+ else 
+ X(i) = x(3); % It has to be between 0.5 and 1.
+ end
+end
+
+#% Find the proportion of each number.
+x0 = length(find(X==0))/n;
+x1 = length(find(X==1))/n;
+x2 = length(find(X==2))/n;
+
+% Acceptance-Rejection Method------------------------
+#% Example: We shall illustrate the acceptance-rejection method by generating random variables from the beta distribution with parameters α = 2 β = 1.
+
+c = 2; % constant 
+n = 100; % Generate 100 random variables.
+#% Set up the arrays to store variates.
+x = zeros(1,n); % random variates
+xy = zeros(1,n);% corresponding y values
+rej = zeros(1,n);% rejected variates
+rejy = zeros(1,n); % corresponding y values
+irv = 1;
+irej = 1;
+while irv <= n
+ y = rand(1); % random number from g(y)
+ u = rand(1); % random number for comparison
+ if u <= 2*y/c;
+ x(irv) = y;
+ xy(irv) = u*c;
+ irv = irv+1
+ else
+ rej(irej) = y;
+ rejy(irej) = u*c; % really comparing u*c<=2*y
+ irej = irej + 1
+ end
+end
+
+% Generating Continuous Random Variables------------------------------------
+#% Normal Distribution---------
+X = Z ⋅ σ + μ.
+#% Exponential Distribution------
+#% Set up the parameters.
+lam = 2;
+n = 1000;
+#% Generate the random variables.
+uni = rand(1,n);
+X = -log(uni)/lam;
+#% Get the values to draw the theoretical curve.
+x = 0:.1:5;
+#% This is a function in the Statistics Toolbox.
+y = exppdf(x,1/2);
+#% Get the information for the histogram.
+[N,h] = hist(X,10);
+#% Change bar heights to make it correspond to the theoretical density - see Chapter 5.
+N = N/(h(2)-h(1))/n;
+% Do the plots.
+bar(h,N,1,'w')
+hold on
+plot(x,y)
+hold off
+xlabel('X')
+ylabel('f(x) - Exponential')
+
+#% Gamma-----------
+n = 1000;
+t = 3;
+lam = 2;
+#% Generate the uniforms needed. Each column contains the t uniforms for a realization of a gamma random variable.
+U = rand(t,n);
+#% Transform according to Equation 4.13. See Example 4.8 for an illustration of Equation 4.14.
+logU = -log(U)/lam;
+X = sum(logU);
+
+#% Now do the histogram.
+[N,h] = hist(X,10);
+#% Change bar heights.
+N = N/(h(2)-h(1))/n;
+#% Now get the theoretical probability density. This is a function in the Statistics Toolbox.
+x = 0:.1:6;
+y = gampdf(x,t,1/lam);
+bar(h,N,1,'w')
+hold on
+plot(x,y,'k')
+hold off
+
+#% Chi-Square--------------
+#% function X = cschirnd(n,nu). This function will return n chi-square random variables with degrees of freedom nu.
+function X = cschirnd(n,nu)
+#% Generate the uniforms needed. 
+rm = rem(nu,2);
+k = floor(nu/2);
+if rm == 0 % then even degrees of freedom
+ U = rand(k,n);
+ if k ~= 1
+ X = -2*log(prod(U));
+ else
+ X = -2*log(U);
+ end
+else % odd degrees of freedom
+ U = rand(k,n);
+ Z = randn(1,n);
+ if k ~= 1
+ X = Z.^2-2*log(prod(U));
+ else
+ X = Z.^2-2*log(U);
+ end
+end
+
+#% Beta-------------------
+rvs = pdfrnd(par1,par2,nrow,ncol);  
+
+#% Let a = 3, b = 3
+n = 500;
+a = 3;
+b = 3;
+rvs = betarnd(a,b,1,n);
+#% Now do the histogram.
+[N,h] = hist(rvs,10);
+#% Change bar heights.
+N = N/(h(2)-h(1))/n;
+#% Now get the theoretical probability density.
+x = 0:.05:1;
+y = betapdf(x,a,b);
+plot(x,y)
+axis equal
+bar(h,N,1,'w')
+hold on
+plot(x,y,'k')
+hold off 
+
+#% Multivariate Normal----------------
+#% function X = csmvrnd(mu,covm,n); This function will return n multivariate random normal variables with d-dimensional mean mu and covariance matrix covm. Note that the covariance
+#% matrix must be positive definite (all eigenvalues are greater than zero), and the mean vector is a column 
+function X = csmvrnd(mu,covm,n)
+d = length(mu);
+#% Get Cholesky factorization of covariance.
+R = chol(covm);
+#% Generate the standard normal random variables.
+Z = randn(n,d);
+X = Z*R + ones(n,1)*mu';
+
+#% Generate the multivariate random normal variables.
+mu = [-2;3];
+covm = [1 0.7 ; 0.7 1];
+X = csmvrnd(mu,covm,500);
+
+#% Multivariate Student’s t Distribution-----------
+#% Generate multivariate normal random variables.
+R = [1 -.8; -.8 1]; % Correlation matrix. 
+df = 5;
+d = 2;
+n = 500;
+#% Generate n 2-D multivariate normal random variables, centered at 0, with covariance C. 
+C = chol(R);
+Xnorm = randn(n,d)*C;
+#% Generate chi-square random variables and divide by the degrees of freedom.
+Xchi = sqrt(chi2rnd(df,n,1)./df);
+#% Divide to get the multivariate t random variables.
+Xt = Xnorm./repmat(Xchi(:),1,d);
+#% Do a scatterplot.
+plot(Xt(:,1),Xt(:,2),'.');
+xlabel('X_1');ylabel('X_2');
+title('Multivariate t Random Variables with \nu = 5')
+#% check the correlation
+corrcoef(Xt)
+
+#% Generating Variates on a Sphere--------------
+#% function X = cssphrnd(n,d); This function will generate n d-dimensional random variates that are distributed on the unit d-dimensional sphere. d >= 2
+function X = cssphrnd(n,d)
+if d < 2
+ error('ERROR - d must be greater than 1.')
+ break
+end
+#% Generate standard normal random variables.
+tmp = randn(d,n);
+#% Find the magnitude of each column. Square each element, add, and take the square root. 
+mag = sqrt(sum(tmp.^2));
+#% Make a diagonal matrix of them - inverses.
+dm = diag(1./mag);
+#% Multiply to scale properly. Transpose so X contains the observations.
+X = (tmp*dm)';
+
+X = cssphrnd(500,2);
+plot(X(:,1),X(:,2),'x')
+axis equal
+xlabel('X_1'),ylabel('X_2')
+
+#% Generating Discrete Random Variables----------------
+#% Binomial-----------------
+#% function X = csbinrnd(n,p,N). This function will generate N binomial random variables with parameters n and p.
+function X = csbinrnd(n,p,N)
+X = zeros(1,N);
+#% Generate the uniform random numbers: N variates of n trials.
+U = rand(N,n);
+#% Loop over the rows, finding the number less than p
+for i = 1:N
+ ind = find(U(i,:) <= p);
+ X(i) = length(ind);
+end
+X = sum(rand(n,N) <= p);
+
+#%Poisson--------------------
+#% function X = cspoirnd(lam,n). This function will generate Poisson random variables with parameter lambda. The reference for this is Ross, 1997, page 50.
+function x = cspoirnd(lam,n)
+x = zeros(1,n);
+j = 1;
+while j <= n
+ flag = 1;
+#% initialize quantities
+ u = rand(1);
+ i = 0;
+ p = exp(-lam);
+ F = p;
+ while flag % generate the variate needed
+ if u <= F % then accept
+ x(j) = i;
+ flag = 0;
+ j = j+1;
+ else % move to next probability
+ p = lam*p/(i+1);
+ i = i+1;
+ F = F + p;
+ end
+ end
+end
+
+#% Set the parameter for the Poisson.
+lam = 0.5;
+N = 5000; % Sample size
+x = cspoirnd(lam,N);
+edges = 0:max(x);
+f = histc(x,edges);
+bar(edges,f/N,1,'w')
+
+#% Determine the observed relative frequencies. These are the estimated values.
+relf = zeros(1,max(x)+1);
+for i = 0:max(x)
+ relf(i+1) = length(find(x==i))/N;
+end
+#% Use the Statistics Toolbox function to get the theoretical values.
+y = poisspdf(0:4,.5); 
+
+#% Discrete Uniform-----------------------
+#% function X = csdunrnd(N,n). This function will generate random variables from the discrete uniform distribution. It picks numbers uniformly between 1 and N.
+function X = csdunrnd(N,n)
+X = ceil(N*rand(1,n));
+
+N = 5;
+n = 500;
+x = csdunrnd(N,n);
+#% Determine the estimated relative frequencies.
+relf = zeros(1,N);
+for i = 1:N
+ relf(i) = length(find(x==i))/n;
+end
+
+% Exploratory Data Analysis------------------------------------------------------
+page 117
 
 
 
