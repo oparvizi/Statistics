@@ -17,9 +17,9 @@
 #% Predominantly closed form algorithms                  Iterative algorithms possible
 #% Statistical optimality                                Statistical robustness
 
-#% Computational Statistics Toolbox:
+% Computational Statistics Toolbox:
 
-#% Common Distributions-----------------------------
+% Common Distributions-----------------------------
 #% Binomial-----------------------------------------
 #% Example: Suppose there is a 20% chance that an adult American suffers from a psychiatric disorder. % We randomly sample 25 adult Americans.
 prob = binocdf(3,25,0.2);
@@ -215,7 +215,7 @@ axis tight
 #% Weibull                    csweibp
 #%                            csweibc
 
-#% Sampling Concepts-------------------------------------
+% Sampling Concepts-------------------------------------
 #% types of simple random sampling: sampling with replacement and sampling without replacement.
 mean(x,dim)
 std(x)
