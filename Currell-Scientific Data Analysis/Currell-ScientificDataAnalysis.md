@@ -1,7 +1,7 @@
 source: https://global.oup.com/uk/orc/biosciences/maths/currell/      
-        https://books.google.de/books?id=kfezBgAAQBAJ&pg=PA54&hl=de&source=gbs_selected_pages&cad=2#v=onepage&q&f=false
-videos: https://global.oup.com/uk/orc/biosciences/maths/currell/student/screencasts/
-Data Files: https://global.oup.com/uk/orc/biosciences/maths/currell/student/data/
+        https://books.google.de/books?id=kfezBgAAQBAJ&pg=PA54&hl=de&source=gbs_selected_pages&cad=2#v=onepage&q&f=false      
+videos: https://global.oup.com/uk/orc/biosciences/maths/currell/student/screencasts/      
+Data Files: https://global.oup.com/uk/orc/biosciences/maths/currell/student/data/       
 
 ## Multiple regression (SPSS)------------------------------------
 ## Multiple regression (Minitab----------------------------------
