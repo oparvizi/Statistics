@@ -28,8 +28,6 @@
 %----------------------------------------------------------------------------------------------------------------------------------
 % Chapter 2: Probability Concepts--------------------------------------------------------------------------------------------------
 %----------------------------------------------------------------------------------------------------------------------------------
-
-
 % Common Distributions-----------------------------
 #% Binomial-----------------------------------------
 #% Example: Suppose there is a 20% chance that an adult American suffers from a psychiatric disorder. % We randomly sample 25 adult Americans.
@@ -225,6 +223,7 @@ axis tight
 #%                            csunifc
 #% Weibull                    csweibp
 #%                            csweibc
+
 %----------------------------------------------------------------------------------------------------------------------------------
 % Chapter 3: Sampling Concepts-----------------------------------------------------------------------------------------------------
 %----------------------------------------------------------------------------------------------------------------------------------
@@ -322,7 +321,6 @@ qhat = interp1(phat,xs,p);
 %----------------------------------------------------------------------------------------------------------------------------------
 % Chapter 4: Generating Random Variables-------------------------------------------------------------------------------------------
 %----------------------------------------------------------------------------------------------------------------------------------
-
 #% General Techniques: Uniform Random Numbers: uniformly distributed on the interval (0,1).
 rng(seed)
 rng('default')
@@ -1265,6 +1263,235 @@ Binomial plot                    csbinoplot
 %----------------------------------------------------------------------------------------------------------------------------------
 % Chapter 6: Finding Structure-----------------------------------------------------------------------------------------------------
 %----------------------------------------------------------------------------------------------------------------------------------
+#% Projecting Data------------------------
+% Specify some data.
+X = [-2 4; 2 4;6 1;8 10;7 5;11 8];
+% Create the projection matrix.
+theta = pi/4;
+c2 = cos(theta)^2;
+cs = cos(theta)*sin(theta);
+s2 = sin(theta)^2;
+P = [c2 cs; cs s2];
+% Now project the data onto the line.
+Xp = X*P;
+% Create the plot shown in Figure 6.1.
+plot(Xp(:,1),Xp(:,2),'d',X(:,1),X(:,2),'o')
+hold on
+plot([0 12 ], [0 12 ], ':')
+hold off
+axis([-4 12 0 12])
+
+#% Principal Component Analysis-----------------
+load glassdata
+[n,d] = size(glassdata);
+% Center the data.
+Xc = glassdata - repmat(sum(glassdata)/n,n,1);
+% Find the covariance matrix.
+covm = cov(Xc);
+
+[v,d]= eig(covm);
+% Get the eigenvalues and make sure they
+% are ordered.
+% Also get the indexes of the sort,
+% to re-order the columns of the eigenvector matrix.
+[eigvals,inds] = sort(diag(d),'descend');
+
+% Create the scree plot.
+plot(1:9, eigvals ,'ko-')
+title('Scree Plot - Glass Data')
+xlabel('Index')
+ylabel('Eigenvalue')
+
+% Now calculate the cumulative percentage of variance.
+pervar = 100*cumsum(eigvals)/sum(eigvals);
+
+eigvecs = v(:,inds);
+P3 = eigvecs(:,1:3);
+Xp3 = Xc*P3;
+
+#% Projection Pursuit EDA------------------------
+% First load up a synthetic data set.
+% This has structure - clusters - in two planes.
+% Note that the data is in
+% ppdata.mat
+load ppdata
+% For m random starts, find the best projection plane
+% using N structure removal procedures.
+% Find two structures:
+N = 2;
+% Four random starts:
+m = 4;
+c = tan(80*pi/180);
+% Number of steps with no increase.
+half = 30;
+
+% To store the N structures:
+[n,d] = size(X);
+astar = zeros(d,N);
+bstar = zeros(d,N);
+ppmax = zeros(1,N);
+
+% Sphere the data.
+muhat = mean(X);
+[V,D] = eig(cov(X));
+Xc = X-ones(n,1)*muhat;
+Z = ((D)^(-1/2)*V'*Xc')';
+
+% Now do the PPEDA.
+% Find a structure, remove it,
+% and look for another one.
+Zt = Z;
+for i = 1:N
+[astar(:,i),bstar(:,i),ppmax(i)] =...
+csppeda(Zt,c,half,m);
+% Now remove the structure.
+Zt = csppstrtrem(Zt,astar(:,i),bstar(:,i));
+end
+
+% Now project and see the structure.
+proj1 = [astar(:,1), bstar(:,1)];
+proj2 = [astar(:,2), bstar(:,2)];
+Zp1 = Z*proj1;
+Zp2 = Z*proj2;
+figure
+plot(Zp1(:,1),Zp1(:,2),'k.'),title('Structure 1')
+xlabel('\alpha^*'),ylabel('\beta^*')
+figure
+plot(Zp2(:,1),Zp2(:,2),'k.'),title('Structure 2')
+xlabel('\alpha^*'),ylabel('\beta^*')
+
+#% Independent Component Analysis----------------
+% Load the data.
+load icaexample
+
+% Initialize weight vector and normalize.
+w = randn(1,2);
+w = w/norm(w);
+% Specify the step size.
+step = 0.02;
+% Do projection pursuit using gradient ascent.
+for iter=1:100
+% Get estimated source signal, y. The matrix z is
+% the spherized signal (see the file for details).
+y = z*w';
+% Get estimated kurtosis. Note that
+% we can use a simplified form because
+% the weight vector has unit length.
+K = mean(y.^4)-3;
+% Find gradient of kurtosis.
+Ycube = repmat(y.^3,1,2);
+grad = mean(Ycube.*z);
+% Update w and normalize.
+w = w + step*grad;
+w = w/norm(w);
+end
+
+% Play back both signals to compare them.
+soundsc(G(:,1),N); % This is the original signal.
+soundsc(y,N); % This is the extracted signal.
+
+#% Grand Tour----------------
+% This is for the iris data.
+load iris
+% Put data into one matrix.
+x = [setosa;virginica;versicolor];
+% Set up vector of frequencies.
+th = sqrt([2 3]);
+% Set up other constants.
+[n,d] = size(x);
+% This is a small irrational number:
+delt = eps*10^14;
+% Do the tour for some specified time steps.
+maxit = 1000;
+cof = sqrt(2/d);
+% Set up storage space for projection vectors.
+a = zeros(d,1);
+b = zeros(d,1);
+z = zeros(n,2);
+
+% Get an initial plot, so the tour can be implemented
+% using Handle Graphics.
+Hlin1 = plot(z(1:50,1),z(1:50,2),'ro');
+set(gcf,'backingstore','off')
+set(gca,'Drawmode','fast')
+hold on
+Hlin2 = plot(z(51:100,1),z(51:100,2),'go');
+Hlin3 = plot(z(101:150,1),z(101:150,2),'bo');
+hold off
+axis equal
+axis vis3d
+axis off
+
+for t = 0:delt:(delt*maxit)
+% Find the transformation vectors.
+for j = 1:d/2
+a(2*(j-1)+1) = cof*sin(th(j)*t);
+a(2*j) = cof*cos(th(j)*t);
+b(2*(j-1)+1) = cof*cos(th(j)*t);
+b(2*j) = cof*(-sin(th(j)*t));
+end
+% Project onto the vectors.
+z(:,1) = x*a;
+z(:,2) = x*b;
+set(Hlin1,'xdata',z(1:50,1),'ydata',z(1:50,2))
+set(Hlin2,'xdata',z(51:100,1),'ydata',z(51:100,2))
+set(Hlin3,'xdata',z(101:150,1),'ydata',z(101:150,2))
+drawnow
+end
+
+#% Nonlinear Dimensionality Reduction--------------------------
+
+
+page 213
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 %----------------------------------------------------------------------------------------------------------------------------------
 % Chapter 1: ----------------------------------------------------------------------------------------------------------------------
