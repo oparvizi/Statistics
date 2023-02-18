@@ -620,37 +620,650 @@ for i = 1:N
  relf(i) = length(find(x==i))/n;
 end
 
+#% Toolbox for Generating Random Variables-----------------
 #% MATLAB® Code-----------------
+#% Distribution         MATLAB Function
+#% Beta                 betarnd
+#% Binomial             binornd
+#% Chi-square           chi2rnd
+#% Discrete uniform     unidrnd
+#% Exponential          exprnd
+#% Gamma                gamrnd
+#% Normal               normrnd
+#% Poisson              poissrnd
+#% Continuous uniform   unifrnd
+#% Weibull              weibrnd
+#% Multivariate normal  mvnrnd
+#% Multivariate t       mvtrnd
+#% Copulas              copularnd
 
-
-
-
-
-
-
-
+#% Computational Statistics Toolbox------------------------
+#% Distribution           MATLAB Function
+#% Beta                   csbetarnd
+#% Binomial               csbinrnd
+#% Chi-square             cschirnd
+#% Discrete uniform       csdunrnd
+#% Exponential            csexprnd
+#% Gamma                  csgamrnd
+#% Multivariate normal    csmvrnd
+#% Poisson                cspoirnd
+#% Points on a sphere     cssphrnd
 
 %----------------------------------------------------------------------------------------------------------------------------------
 % Chapter 5: Exploratory Data Analysis---------------------------------------------------------------------------------------------
 %----------------------------------------------------------------------------------------------------------------------------------
+#% Exploring Univariate Data----------------
+
+#% Histograms--------------
+#% histogram of the data in forearm
+% The hist function optionally returns the
+% bin centers and frequencies.
+[n,x] = hist(forearm);
+% Plot and use the argument of width=1
+% to produce bars that touch.
+bar(x,n,1);
+axis square
+title('Frequency Histogram')
+% Now create a relative frequency histogram.
+% Divide each box by the total number of points.
+subplot(1,2,2)
+bar(x,n/140,1)
+title('Relative Frequency Histogram')
+axis square
+
+#% explore the forearm data using a density histogram
+% Get parameter estimates for the normal distribution.
+mu = mean(forearm);
+v = var(forearm);
+% Obtain normal pdf based on parameter estimates.
+xp = linspace(min(forearm),max(forearm));
+yp = csnormp(xp,mu,v);
+% Get the information needed for a histogram.
+[nu,x] = hist(forearm);
+% Get the widths of the bins.
+h = x(2)-x(1);
+% Plot as density histogram - Equation 5.1.
+bar(x,nu/(140*h),1)
+hold on
+plot(xp,yp)
+xlabel(‘Length (inches)’)
+title('Density Histogram and Density Estimate')
+hold off
+
+#% Stem-and-Leaf----------------
+load tibetan
+% This loads up all 5 measurements of the skulls.
+% We use the fourth characteristic to illustrate
+% the stem-and-leaf plot. We first round them.
+x = round(tibetan(:,4));
+csstemleaf(x)
+title('Height (mm) of Tibetan Skulls')
+
+#% Quantile-Based Plots — Continuous Distributions-------
+% Generate the random variables.
+x = randn(1,75);
+y = randn(1,75);
+% Find the order statistics.
+xs = sort(x);
+ys = sort(y);
+% Now construct the q-q plot.
+plot(xs,ys,'o')
+xlabel('X - Standard Normal')
+ylabel('Y - Standard Normal')
+axis equal
+
+
+% Generate the random variables.
+m = 50;
+n = 75;
+x = randn(1,n);
+y = randn(1,m);
+% Find the order statistics for y.
+ys = sort(y);
+% Now find the associated quantiles using the x.
+% Probabilities for quantiles:
+p = ((1:m) - 0.5)/m;
+xs = csquantiles(x,p);
+% Construct the plot.
+plot(xs,ys,'ko')
+% Get the reference line.
+% Use the 1st and 3rd quartiles of each set to
+% get a line.
+qy = csquantiles(y,[0.25,0.75]);
+qx = csquantiles(x,[0.25,0.75]);
+[pol, s] = polyfit(qx,qy,1);
+% Add the line to the figure.
+yhat = polyval(pol,xs);
+hold on
+plot(xs,yhat,'k')
+xlabel('Sample Quantiles - X'),
+ylabel('Sorted Y Values')
+hold off
+
+
+% Generate a random sample from a standard normal.
+x = randn(1,100);
+% Get the probabilities.
+prob = ((1:100)-0.5)/100;
+% Now get the theoretical quantiles.
+qp = norminv(prob,0,1);
+% Now plot theoretical quantiles versus
+% the sorted data.
+plot(sort(x),qp,'ko')
+xlabel('Sorted Data')
+ylabel('Standard Normal Quantiles')
+
+
+% Generate a random sample from a
+% uniform distribution.
+x = rand(1,100);
+% Get the probabilities.
+prob = ((1:100)-0.5)/100;
+% Now get the theoretical quantiles.
+qp = norminv(prob,0,1);
+% Now plot theoretical quantiles versus
+% the sorted data.
+plot(sort(x),qp,'ko')
+ylabel('Standard Normal Quantiles')
+xlabel('Sorted Data')
+
+#% Quantile Plots — Discrete Distributions--------------------
+k = 0:6; % vector of counts
+n_k = [156 63 29 8 4 1 1];
+N = sum(n_k);
+% Get vector of factorials.
+fact = zeros(size(k));
+for i = k
+fact(i+1) = factorial(i);
+end
+% Get phi(n_k) for plotting.
+phik = log(fact.*n_k/N);
+% Find the counts that are equal to 1.
+% Plot these with the symbol 1.
+% Plot rest with a symbol.
+ind = find(n_k~=1);
+plot(k(ind),phik(ind),'o')
+ind = find(n_k==1);
+if ~isempty(ind)
+text(k(ind),phik(ind),'1')
+end
+% Add some white space to see better.
+axis([-0.5 max(k)+1 min(phik)-1 max(phik)+1])
+xlabel('Number of Occurrences - k')
+ylabel('\phi (n_k)')
+
+#% Binomialness Plot----------------------------
+% Poissonness plot - modified
+k = 0:6; % vector of counts
+% Find n*_k.
+n_k = [156 63 29 8 4 1 1];
+N = sum(n_k);
+phat = n_k/N;
+nkstar = n_k-0.67-0.8*phat;
+% Get vector of factorials.
+fact = zeros(size(k));
+for i = k
+fact(i+1) = factorial(i);
+end
+% Find the frequencies that are 1; nkstar=1/e.
+ind1 = find(n_k==1);
+nkstar(ind1)= 1/2.718;
+% Get phi(n_k) for plotting.
+phik = log(fact.*nkstar/N);
+ind = find(n_k~=1);
+plot(k(ind),phik(ind),'o')
+if ~isempty(ind1)
+text(k(ind1),phik(ind1),'1')
+end
+% Add some white space to see better.
+axis([-0.5 max(k)+1 min(phik)-1 max(phik)+1])
+xlabel('Number of Occurrences - k')
+ylabel('\phi (n^*_k)')
+
+
+% Binomialness plot.
+k = 0:9;
+n = 10;
+n_k = [1 3 4 23 25 19 18 5 1 1];
+N = sum(n_k);
+nCk = zeros(size(k));
+for i = k
+nCk(i+1) = nchoosek(n,i);
+% nchoosek is a function in basic MATLAB.
+end
+phat = n_k/N;
+nkstar = n_k-0.67-0.8*phat;
+% Find the frequencies that are 1; nkstar=1/e.
+ind1 = find(n_k==1);
+nkstar(ind1) = 1/2.718;
+% Get phi(n_k) for plotting.
+phik = log(nkstar./(N*nCk));
+% Find the counts that are equal to 1.
+ind = find(n_k~=1);
+plot(k(ind),phik(ind),'o')
+if ~isempty(ind1)
+text(k(ind1),phik(ind1),'1')
+end
+% Add some white space to see better.
+axis([-0.5 max(k)+1 min(phik)-1 max(phik)+1])
+xlabel('Number of Females - k')
+ylabel('\phi (n^*_k)')
+
+#% Box Plots---------------------
+% Generate a sample from the uniform distribution.
+xunif = rand(100,1);
+% Generate sample from the standard normal.
+xnorm = randn(100,1);
+% Generate a sample from the exponential distribution.
+% NOTE: this function is from the Statistics Toolbox.
+xexp = exprnd(1,100,1);
+% Construct a boxplot with notches.
+boxplot([xunif,xnorm,xexp],'notch','on')
+
+
+% Use data similar to that in Example 5.10, but
+% but make it different sample sizes. We need to
+% store in a cell array.
+X{1} = rand(50,1); % uniform
+X{2} = randn(100,1); % normal
+X{3} = exprnd(1,500,1); % exponential
+% Construct a histplot. This function is
+% included in the Computational Statistics Toolbox.
+boxp(X,'hp')
+title('Histplot of Uniform, Normal, Exponential')
+
+
+% Construct a box-percentile plot. This function is
+% included in the Computational Statistics Toolbox.
+boxprct(X)
+title('Box-Percentile Plot')
+
+#% Exploring Bivariate and Trivariate Data---------------
+#% Scatterplots----------------------------
+
+% Create a positive definite covariance matrix.
+vmat = [2, 1.5; 1.5, 9];
+% Create mean at (2,3).
+mu = [2 3];
+[u,s,v] = svd(vmat);
+vsqrt = ( v*(u'.*sqrt(s)))';
+% Get standard normal random variables.
+td = randn(250,2);
+% Use x=z*sigma+mu to transform - see Chapter 4.
+data = td*vsqrt+ones(250,1)*mu;
+% Create a scatterplot using the plot function.
+% Figure 5.16.
+plot(data(:,1),data(:,2),'x')
+axis equal
+% Create a scatterplot using the scatter function.
+
+
+% Figure 5.17.
+% Use filled-in markers.
+scatter(data(:,1),data(:,2),'filled')
+axis equal
+box on
+
+#% Surface Plots---------------------
+% Create a bivariate standard normal.
+% First create a grid for the domain.
+[x,y] = meshgrid(-3:.1:3,-3:.1:3);
+% Evaluate using the bivariate standard normal.
+z = (1/(2*pi))*exp(-0.5*(x.^2+y.^2));
+% Do the plot as a surface.
+surf(x,y,z)
+
+#% Contour Plots------------------------
+% Get the data for plotting.
+[x,y,z] = peaks;
+% Create a 2D contour plot with labels.
+% This returns the information for the labels.
+c = contour(x,y,z);
+% Add the labels to the plot.
+clabel(c)
+
+% Create a 2D filled contour plot.
+contourf(x,y,z,15)
+
+contour3(x,y,z,15)
+
+#% Bivariate Histogram----------------------
+% Generate sample that is
+% standard normal in each dimension.
+n = 1000;
+d = 2;
+x = randn(n,d);
+% Need bin origins.
+
+
+bin0 = [floor(min(x(:,1))) floor(min(x(:,2)))];
+% The bin widths - h - are covered later.
+h = 3.504*n^(-0.25)*ones(1,2);
+% find the number of bins
+nb1 = ceil((max(x(:,1))-bin0(1))/h(1));
+nb2 = ceil((max(x(:,2))-bin0(2))/h(2));
+% find the mesh
+t1 = bin0(1):h(1):(nb1*h(1)+bin0(1));
+t2 = bin0(2):h(2):(nb2*h(2)+bin0(2));
+[X,Y] = meshgrid(t1,t2);
+% Find bin frequencies.
+[nr,nc] = size(X);
+vu = zeros(nr-1,nc-1);
+for i = 1:(nr-1)
+for j = 1:(nc-1)
+xv = [X(i,j) X(i,j+1) X(i+1,j+1) X(i+1,j)];
+yv = [Y(i,j) Y(i,j+1) Y(i+1,j+1) Y(i+1,j)];
+in = inpolygon(x(:,1),x(:,2),xv,yv);
+vu(i,j) = sum(in(:));
+end
+end
+Z = vu/(n*h(1)*h(2));
+% Get some axes that make sense.
+[XX,YY] = meshgrid(linspace(-3,3,nb1),...
+linspace(-3,3,nb2));
+surf(XX,YY,Z)
+
+#% MATLAB function bar3----------------
+% The Z matrix was obtained in Example 5.15.
+bar3(Z,1)
+% Use some Handle Graphics.
+set(gca,'YTickLabel',' ','XTickLabel',' ')
+set(gca,'YTick',0,'XTick',0)
+grid off
+
+#% MATLAB function his3-------------------
+% Make a histogram with see-through bars. The
+% hist3 function is in the Statistics Toolbox.
+% We use the data (x) generated in Example 5.15.
+hist3(x,[10 10],'FaceAlpha',0.35);
+set(gcf,'renderer','opengl');
+axis tight
+
+
+% Plot the 2D histogram as a scatterplot with
+% heights proportional to marker size.
+% Find the bin centers to use in the scatterplot.
+n1 = length(t1);
+n2 = length(t2);
+tt1 = linspace((t1(1)+t1(2))/2,...
+(t1(n1-1)+t1(n1))/2,nb1);
+tt2 = linspace((t2(1)+t2(2))/2,...
+(t2(n2-1)+t2(n2))/2,nb2);
+[xxs,yys] = meshgrid(tt1,tt2);
+scatter(xxs(:),yys(:),(Z(:)+eps)*1000,...
+(Z(:)+eps)*1000,'filled')
+% Create a colorbar and set the axis
+% to the correct scale
+h_ax = colorbar;
+% Get the current labels.
+temp = get(h_ax,'Yticklabel');
+[nr,nc] = size(temp);
+% Convert from strings to numbers.
+newlab = cell(nr,1);
+tempcell = cellstr(temp);
+% Re-scale and convert back to numbers.
+
+
+for i=1:nr
+newlab{i}=num2str((str2num(tempcell{i})/1000));
+end
+set(h_ax,'Yticklabel',newlab)
+
+#% 3D Scatterplot---------------
+% Load the insect data
+load insect
+% Create a 3D scatter plot using a different color
+% and marker for each class of insect.
+% Plot the first class and hold the plot.
+plot3(insect(1:10,1),insect(1:10,2),...
+insect(1:10,3),'ro')
+hold on
+% Plot the second class.
+plot3(insect(11:20,1),insect(11:20,2),...
+insect(11:20,3),'kx')
+% Plot the third class.
+plot3(insect(21:30,1),insect(21:30,2),...
+insect(21:30,3),'b*')
+grid on, hold off
+
+#% Exploring Multi-Dimensional Data-----------------------
+#% Scatterplot Matrix---------------------
+load iris
+% This loads up three matrices, one for each species.
+% Get the plotmatrix display of the Iris setosa data.
+[H,ax,bigax,P] = plotmatrix(setosa);
+axes(bigax),title('Iris Setosa')
+
+% Create the labels as a cell array of strings.
+labs = {'Sepal Length','Sepal Width',...
+'Petal Length', 'Petal Width'};
+[H,ax,bigax,P] = plotmatrix(virginica);
+axes(bigax)
+title('Virginica')
+% Delete the histograms.
+delete(P)
+%Put the labels in - the positions might have
+% to be adjusted depending on the text.
+for i = 1:4
+txtax = axes('Position',get(ax(i,i),'Position'),...
+'units','normalized');
+text(.1, .5,labs{i})
+set(txtax,'xtick',[],'ytick',[],...
+'xgrid','off','ygrid','off','box','on')
+end
+
+#% Slices and Isosurfaces--------------
+% Create a grid for the domain.
+[x,y,z] = meshgrid(-3:.5:3,-3:.5:3,-3:.5:3);
+[n,d] = size(x(:));
+% Evaluate the trivariate standard normal.
+a = (2*pi)^(3/2);
+arg = (x.^2 + y.^2 + z.^2);
+prob = exp((-.5)*arg)/a;
+% Slice through the x=0, y=0, z=0 planes.
+slice(x,y,z,prob,0,0,0)
+xlabel('X Axis')
+ylabel('Y Axis')
+zlabel('Z Axis')
+% Add a colorbar.
+colorbar
+
+
+% Get some data that will be between 0 and 1.
+data = rand(10,10,10);
+data = smooth3(data,'gaussian');
+% Just in case there are some figure windows
+% open - we should start anew.
+close all
+for i = [0.4 0.6]
+figure
+hpatch = patch(isosurface(data,i),...
+'Facecolor','blue',...
+'Edgecolor','none',...
+'AmbientStrength',.2,...
+'SpecularStrength',.7,...
+'DiffuseStrength',.4);
+isonormals(data,hpatch)
+title(['f(x,y,z) = ' num2str(i)])
+daspect([1,1,1])
+axis tight
+axis off
+view(3)
+camlight right
+camlight left
+lighting phong
+drawnow
+end
+
+
+for i=[0.4 0.6]
+figure
+hpatch = patch(isosurface(data,i),...
+'Facecolor','blue',...
+'Edgecolor','none',...
+'AmbientStrength',.2,...
+'SpecularStrength',.7,...
+'DiffuseStrength',.4);
+isonormals(data,hpatch)
+patch(isocaps(data,i),...
+'Facecolor','interp',...
+'EdgeColor','none')
+colormap hsv
+title(['f(x,y,z) = ' num2str(i)])
+daspect([1,1,1])
+axis tight, axis off
+view(3), camlight right, camlight left
+lighting phong
+drawnow
+end
+
+#% Glyphs------------------------
+load cereal
+% This file contains the labels and
+% the matrix of 8 observations.
+glyphplot(X, 'Glyph','face')
+% Construct the stars and face plot using the
+% Statistics Toolbox function.
+% The following produces a star plot.
+glyphplot(cereal)
+glyphplot(cereal,'glyph','face','Obslabels',labs)
+box on
+title('Chernoff Face Plot of Cereal Data')
 
 
 
+% Get the domain.
+t = linspace(-pi,pi);
+% Evaluate function values for each observation.
+f1 = 2/sqrt(2)+6*sin(t)+4*cos(t);
+f2 = 5/sqrt(2)+7*sin(t)+3*cos(t);
+f3 = 1/sqrt(2)+8*sin(t)+9*cos(t);
+plot(t,f1,'.',t,f2,'*',t,f3,'o')
+legend('F1','F2','F3')
+xlabel('t')
 
 
 
+load iris
+% This defines the domain that will be plotted.
+theta = (-pi+eps):0.1:(pi-eps);
+n = 50;
+p = 4;
+ysetosa = zeros(n,p);
+% There will n curves plotted,
+% one for each data point.
+yvirginica = zeros(n,p);
+% Take dot product of each row with observation.
+ang = zeros(length(theta),p);
+fstr = '[1/sqrt(2) sin(i) cos(i) sin(2*i)]';
+k = 0;
+% Evaluate sin and cos functions at each angle theta.
+for i = theta
+k = k+1;
+ang(k,:) = eval(fstr);
+end
+% Now generate a ‘y’ for each observation.
+for i = 1:n
+for j = 1:length(theta)
+% Find dot product with observation.
+ysetosa(i,j)=setosa(i,:)*ang(j,:)';
+yvirginica(i,j)=virginica(i,:)*ang(j,:)';
+end
+end
+% Do all of the plots.
+plot(theta,ysetosa(1,:),'r',...
+theta,yvirginica(1,:),'b-.')
+legend('Iris Setosa','Iris Virginica')
+hold
+for i = 2:n
+plot(theta,ysetosa(i,:),'r',...
+theta,yvirginica(i,:),'b-.')
+end
+hold off
+title('Andrews Plot')
+xlabel('t')
+ylabel('Andrews Curve')
+
+#% Parallel Coordinates-----------------
+c = [1 3 7 2];
+% Get range of parallel axes.
+x = [1 7];
+% Plot the 4 parallel axes.
+plot(x,zeros(1,2),x,ones(1,2),x,...
+2*ones(1,2),x,3*ones(1,2))
+hold on
+% Now plot point c as a polygonal line.
+plot(c,0:3,c,0:3,'*')
+ax = axis;
+axis([ax(1) ax(2) -1 4 ])
+set(gca,'ytick',0)
+hold off
 
 
+% Get a covariance matrix with correlation 1.
+covmat = [1 1; 1 1];
+% Generate the bivariate normal random variables.
+% Note: you could use csmvrnd to get these.
+[u,s,v] = svd(covmat);
+vsqrt = (v*(u'.*sqrt(s)))';
+subdata = randn(20,2);
+data = subdata*vsqrt;
+% Create parallel plot using CS Toolbox function.
+csparallel(data)
+title('Correlation of 1')
 
 
+covmat = [4 1.2; 1.2, 9];
 
 
+load iris
+figure
+csparallel(setosa,'-.')
+hold on
+csparallel(virginica,'-')
+hold off
 
 
+Purpose                   MATLAB Function
+MATLAB
+Discrete data plots       stem, stairs
+Contour plots             contour
+Histogram                 hist
+Plots                     plot, plot3
+Scatterplot               scatter, scatter3
+Scatterplot matrix        plotmatrix
 
+MATLAB Statistics Toolbox
+Andrews curves                   andrewsplot
+Boxplot                          boxplot
+Empirical CDF                    cdfplot
+Glyph plot (faces and stars)     glyphplot
+Grouped scatterplot              gscatter
+Grouped scatterplot matrix       gplotmatrix
+Histogram of empirical CDF       ecdfhist
+Histogram — bivariate            hist3
+Normal probability plot          normplot
+Parallel coordinate plot         parallelcoords
+Probability plots                probplot
+Quantile–quantile plot           qqplot
+Scatterplot with histograms      scatterhist
+Weibull probability plot         wblplot
+
+
+Star plot                        csstars
+Stem-and-leaf plot               csstemleaf
+Box Plot — variable width and    boxp
+histplot
+Box-percentile plot              boxprct
+Parallel coordinates plot        csparallel
+Q-Q plot                         csqqplot
+Poissonness plot                 cspoissplot
+Andrews curves                   csandrews
+Exponential probability plot     csexpoplot
+Binomial plot                    csbinoplot
 
 %----------------------------------------------------------------------------------------------------------------------------------
-% Chapter 1: ----------------------------------------------------------------------------------------------------------------------
+% Chapter 6: Finding Structure-----------------------------------------------------------------------------------------------------
 %----------------------------------------------------------------------------------------------------------------------------------
 
 %----------------------------------------------------------------------------------------------------------------------------------
