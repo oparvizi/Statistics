@@ -12,3 +12,4 @@ The aim of this part was to cover the main points of statistical and biostatisti
       StatisticsHighThroughputDataAnalysis.R:                        Statistics
       StatisticsR.R:                                                 Statistics in R
       StrategiesorFindingAndInterpretingDataAnomalies.txt:           X
+      MetaAnalysis.md                                                Key points.
