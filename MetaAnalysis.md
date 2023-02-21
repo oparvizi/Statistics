@@ -29,26 +29,29 @@ Source: Oxford Handbook of Medical Statistics: https://academic.oup.com/book/245
         Extracting the relevant data        
         Reporting results: PRISMA         
   Meta-analysis: combine the results from multiple studies to produce a single estimate.
-  
-        why?
+     why?
+     
         • To pool all findings on a topic to gain an overall view           
         • To increase statistical power compared with individual studies           
         • To improve estimates of effect size       
         • To resolve controversies when the findings of studies disagree         
-        • To answer new questions not addressed in individual studies
-        Protocol for meta- analysis:
-            • Aims of the meta- analysis
-            • Rules for inclusion and exclusion of studies
-            • Search strategies
-            • Statistical methods
-        Good meta- analysis?
+        • To answer new questions not addressed in individual studies        
+   Protocol for meta- analysis:
+     
+        • Aims of the meta- analysis
+        • Rules for inclusion and exclusion of studies
+        • Search strategies
+        • Statistical methods
+   Good meta- analysis?
+   
             • The meta- analysis has a clear question
             • All relevant evidence has been gathered
             • The individual study estimates have been evaluated to ensure that studies are sufficiently similar to be pooled
             • Publication bias has been considered and addressed as appropriate
             • The data have been suitably analysed and presented with a clear description of how the meta- analysis was conducted in accordance
             with the PRISMA guidelines
-        Sample size for meta- analysis:
+   Sample size for meta- analysis:
+    
             • The number of studies in a meta- analysis obviously varies according to what research has been previously conducted in a specific area
             • The greater the number of studies, the greater the precision of the pooled estimate in a meta- analysis
             • The most important issue is that the studies represent the totality of evidence to provide an unbiased overall estimate
@@ -58,20 +61,23 @@ Source: Oxford Handbook of Medical Statistics: https://academic.oup.com/book/245
                                             of publication bias may give a very precise estimate but it may be 
                                                         ------------- biased.-------------
        
-       Combining estimates in meta- analyses:
+   Combining estimates in meta- analyses:
+   
          - Vote counting: numbers of studies showing statistically significant (‘positive’) results are counted.
          - Sign test: is reasonable where no numerical data are provided from studies but the direction of the effect is known, or where studies are so diverse that a                        pooled estimate makes no sense
          - Combining P values
          - Weighting effect estimates
          - Software: RevMan, CMA, Stata, SPSS, SAS, and R
-       Combining different effect measures 
+   Combining different effect measures
+   
          - Cohen’s d  
                 d = difference in means/standard deviation   ,   odds ratios (ORs)
          - Cautions: Sensitivity analyses   
 <img width="328" alt="image" src="https://user-images.githubusercontent.com/105786517/220352739-ff1a3ccb-67bd-4e1d-bff8-4b57a68f9ea1.png">   
          
-       Heterogeneity: is usually taken to mean that there is observed variability between study estimates.
-         - Tests for heterogeneity
+   Heterogeneity: is usually taken to mean that there is observed variability between study estimates.
+   
+       Tests for heterogeneity
                 • In general, the test is conservative and so a non- significant result cannot be interpreted as showing that there is no heterogeneity. 
                   For this reason, a cut- off of P <0.10 is commonly used rather than P <0.05 to indicate heterogeneity
                 • T he test itself does not provide an estimate of the degree of heterogeneity (see the I2 statistic in the following section)
