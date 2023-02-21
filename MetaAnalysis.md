@@ -9,36 +9,33 @@ Source: Oxford Handbook of Medical Statistics: https://academic.oup.com/book/245
    - Criticisms of evidence hierarchies     
    -Systematic reviews: ummarize all scientific evidence relating to a particular research question include the followingsources:
         
-        • Computerized databases such as PubMed and MEDLINE
-        • Bibliographies of textbooks
-        • References in published original studies and in review articles
-        • Registers of studies conducted
-        • Personal communication with specialists in the field of interest
-        It is usually necessary to search multiple sources for several reasons:
-        • E lectronic databases may not be totally complete due to the accidental
-        omission of some publications
-        • Studies may only be listed in a specialist database, such as the AMED
-        database for studies in allied and complementary medicine
-        • Some newer medical journals may not yet be indexed in PubMed
+        • Computerized databases such as PubMed and MEDLINE          
+        • Bibliographies of textbooks        
+        • References in published original studies and in review articles       
+        • Registers of studies conducted       
+        • Personal communication with specialists in the field of interest         
+        It is usually necessary to search multiple sources for several reasons:        
+        • E lectronic databases may not be totally complete due to the accidental omission of some publications        
+        • Studies may only be listed in a specialist database, such as the AMED database for studies in allied and complementary medicine          
+        • Some newer medical journals may not yet be indexed in PubMed          
             
-        Search strategy: needs to be tailored to the purpose of the study
-            • Identify abstracts in the subject area
-            • Read and discard those that are inappropriate
-            • O btain full versions of all potentially appropriate publications and discard those that are then shown to be inappropriate
-        Choosing search terms for electronic searching
-            • Use a combination of recognized words— MeSH (medical subjectheading)
-            • Watch out for UK versus US spellings
-            • Check that the search strategy has worked
-        Extracting the relevant data
-        Reporting results: PRISMA
+        Search strategy: needs to be tailored to the purpose of the study       
+            • Identify abstracts in the subject area       
+            • Read and discard those that are inappropriate        
+            • Obtain full versions of all potentially appropriate publications and discard those that are then shown to be inappropriate Choosing search terms for                   electronic searching         
+            • Use a combination of recognized words— MeSH (medical subjectheading)           
+            • Watch out for UK versus US spellings            
+            • Check that the search strategy has worked                    
+        Extracting the relevant data        
+        Reporting results: PRISMA         
   Meta-analysis: combine the results from multiple studies to produce a single estimate.
   
         why?
-        • T o pool all findings on a topic to gain an overall view
-        • T o increase statistical power compared with individual studies
-        • T o improve estimates of effect size
-        • T o resolve controversies when the findings of studies disagree
-        • T o answer new questions not addressed in individual studies
+        • To pool all findings on a topic to gain an overall view           
+        • To increase statistical power compared with individual studies           
+        • To improve estimates of effect size       
+        • To resolve controversies when the findings of studies disagree         
+        • To answer new questions not addressed in individual studies
         Protocol for meta- analysis:
             • Aims of the meta- analysis
             • Rules for inclusion and exclusion of studies
@@ -47,14 +44,14 @@ Source: Oxford Handbook of Medical Statistics: https://academic.oup.com/book/245
         Good meta- analysis?
             • The meta- analysis has a clear question
             • All relevant evidence has been gathered
-            • T he individual study estimates have been evaluated to ensure that studies are sufficiently similar to be pooled
+            • The individual study estimates have been evaluated to ensure that studies are sufficiently similar to be pooled
             • Publication bias has been considered and addressed as appropriate
-            • T he data have been suitably analysed and presented with a clear description of how the meta- analysis was conducted in accordance
+            • The data have been suitably analysed and presented with a clear description of how the meta- analysis was conducted in accordance
             with the PRISMA guidelines
         Sample size for meta- analysis:
             • The number of studies in a meta- analysis obviously varies according to what research has been previously conducted in a specific area
-            • T he greater the number of studies, the greater the precision of the pooled estimate in a meta- analysis
-            • T he most important issue is that the studies represent the totality of evidence to provide an unbiased overall estimate
+            • The greater the number of studies, the greater the precision of the pooled estimate in a meta- analysis
+            • The most important issue is that the studies represent the totality of evidence to provide an unbiased overall estimate
             • It may be perfectly reasonable to pool just three or four studies if they are all that exist
         
                                         A large meta- analysis that obtains only a subset of all studies because
