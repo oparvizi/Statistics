@@ -19,7 +19,8 @@ Source: Oxford Handbook of Medical Statistics: https://academic.oup.com/book/245
         • Studies may only be listed in a specialist database, such as the AMED database for studies in allied and complementary medicine          
         • Some newer medical journals may not yet be indexed in PubMed          
             
-        Search strategy: needs to be tailored to the purpose of the study       
+   Search strategy: needs to be tailored to the purpose of the study   
+   
             • Identify abstracts in the subject area       
             • Read and discard those that are inappropriate        
             • Obtain full versions of all potentially appropriate publications and discard those that are then shown to be inappropriate Choosing search terms for                   electronic searching         
