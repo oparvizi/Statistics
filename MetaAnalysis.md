@@ -2,12 +2,12 @@ Source: Oxford Handbook of Medical Statistics: https://academic.oup.com/book/245
 
 ## Meta- analysis         
 
-   - Hierarchies of evidence                         
+   Hierarchies of evidence                         
     <img width="267" alt="image" src="https://user-images.githubusercontent.com/105786517/220347405-269f0d21-6ee3-48e2-9151-362a946fab71.png">       
 
-   - Combining multiple studies
-   - Criticisms of evidence hierarchies     
- -Systematic reviews: ummarize all scientific evidence relating to a particular research question include the followingsources:
+   Combining multiple studies
+   Criticisms of evidence hierarchies     
+   Systematic reviews: ummarize all scientific evidence relating to a particular research question include the followingsources:
         
         • Computerized databases such as PubMed and MEDLINE          
         • Bibliographies of textbooks        
