@@ -1,10 +1,13 @@
 Source: Oxford Handbook of Medical Statistics: https://academic.oup.com/book/24583
-Meta- analysis
-Hierarchies of evidence             
+
+## Meta- analysis         
+
+   - Hierarchies of evidence                         
     <img width="267" alt="image" src="https://user-images.githubusercontent.com/105786517/220347405-269f0d21-6ee3-48e2-9151-362a946fab71.png">       
 
-   Combining multiple studies  
-   Systematic reviews: ummarize all scientific evidence relating to a particular research question include the followingsources:
+   - Combining multiple studies
+   - Criticisms of evidence hierarchies     
+   -Systematic reviews: ummarize all scientific evidence relating to a particular research question include the followingsources:
         
         • Computerized databases such as PubMed and MEDLINE
         • Bibliographies of textbooks
@@ -167,17 +170,16 @@ Detecting publication bias
         • In the absence of clear evidence- based guidelines, it would seem prudent to use and interpret methods for adjusting for publication bias
         with caution        
   Independent patient data meta- analysis           
+     
      Limitations of study- level meta- analyses              
      Independent patient data (IPD) meta- analysis         
   
   Challenges in meta- analysis     
   
-  
-  Criticisms of evidence hierarchies   
     Trial designs                
     Observational study designs       
     Disparate outcomes
     Number needed to treat (NNT)                 
   <img width="331" alt="image" src="https://user-images.githubusercontent.com/105786517/220361215-f2e64e4e-9c46-4527-8c17-c2406ac2da10.png">           
   
-   
+
