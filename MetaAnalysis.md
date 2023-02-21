@@ -7,7 +7,7 @@ Source: Oxford Handbook of Medical Statistics: https://academic.oup.com/book/245
 
    - Combining multiple studies
    - Criticisms of evidence hierarchies     
-   -Systematic reviews: ummarize all scientific evidence relating to a particular research question include the followingsources:
+ -Systematic reviews: ummarize all scientific evidence relating to a particular research question include the followingsources:
         
         • Computerized databases such as PubMed and MEDLINE          
         • Bibliographies of textbooks        
