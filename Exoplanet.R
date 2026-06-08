@@ -1,103 +1,121 @@
-import pandas as pd
-import numpy as np
-import requests
+# =========================================================
+# 1. PACKAGES
+# =========================================================
+install.packages(c("tidyverse"))
+library(tidyverse)
 
 # =========================================================
-# 1. LOAD REAL EXOPLANET DATA (NASA Exoplanet Archive)
+# 2. LOAD REAL NASA EXOPLANET DATA
 # =========================================================
-url = "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+pl_name,pl_rade,pl_bmasse,pl_orbper,pl_eqt,st_teff,st_rad,st_mass+from+pscomppars&format=csv"
+url <- "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+pl_name,pl_rade,pl_bmasse,pl_orbper,st_teff,st_rad,st_mass,pl_eqt+from+pscomppars&format=csv"
 
-df = pd.read_csv(url)
-
-# Clean data
-df = df.dropna()
+df <- read.csv(url)
+df <- na.omit(df)
 
 # =========================================================
-# 2. CONSTANTS
+# 3. CONSTANTS
 # =========================================================
-EARTH_RADIUS = 1
-EARTH_MASS = 1
-EARTH_TEMP = 288  # Kelvin
-
-# =========================================================
-# 3. HABITABLE ZONE ESTIMATION
-# =========================================================
-def habitable_zone(teff, radius):
-    # simplified stellar luminosity approximation
-    luminosity = (radius ** 2) * (teff / 5778) ** 4
-    return luminosity
+earth_temp <- 288
+earth_flux <- 1  # Earth receives 1 unit solar flux
 
 # =========================================================
-# 4. TEMPERATURE ESTIMATE (simplified equilibrium model)
+# 4. PHYSICS: ORBITAL DISTANCE (AU)
+# Kepler’s 3rd law approximation
 # =========================================================
-def estimate_temp(st_teff, st_rad, distance_au):
-    lum = (st_rad ** 2) * (st_teff / 5778) ** 4
-    temp = 278 * (lum ** 0.25) / np.sqrt(distance_au)
-    return temp
-
-# =========================================================
-# 5. EARTH SIMILARITY INDEX (ESI)
-# =========================================================
-def esi(radius, mass, temp):
-    r = np.exp(-((radius - 1) / 0.57) ** 2)
-    m = np.exp(-((mass - 1) / 1.5) ** 2)
-    t = np.exp(-((temp - EARTH_TEMP) / 75) ** 2)
-    return (r * m * t) ** (1/3)
+orbital_distance <- function(period, star_mass) {
+  (period / 365.25)^(2/3) * (star_mass)^(1/3)
+}
 
 # =========================================================
-# 6. PROCESS DATA
+# 5. STELLAR FLUX (INSOLATION)
 # =========================================================
-results = []
-
-for _, row in df.iterrows():
-    try:
-        radius = row["pl_rade"]
-        mass = row["pl_bmasse"]
-        period = row["pl_orbper"]
-        temp = row["pl_eqt"]
-        star_temp = row["st_teff"]
-        star_radius = row["st_rad"]
-
-        # approximate orbital distance (AU)
-        distance = (period / 365.25) ** (2/3) * (star_mass := row["st_mass"]) ** (1/3)
-
-        # habitability score
-        esi_score = esi(radius, mass, temp)
-
-        # temperature check
-        temp_score = np.exp(-abs(temp - EARTH_TEMP) / 100)
-
-        # final habitability index
-        hsi = (esi_score * 0.5) + (temp_score * 0.5)
-
-        results.append({
-            "planet": row["pl_name"],
-            "ESI": esi_score,
-            "TempScore": temp_score,
-            "HabitabilityScore": hsi
-        })
-
-    except:
-        continue
+stellar_flux <- function(st_rad, st_teff, distance) {
+  luminosity <- (st_rad^2) * (st_teff / 5778)^4
+  luminosity / (distance^2)
+}
 
 # =========================================================
-# 7. RESULTS TABLE
+# 6. EQUILIBRIUM TEMPERATURE MODEL
 # =========================================================
-res = pd.DataFrame(results)
-res = res.sort_values("HabitabilityScore", ascending=False)
-
-print("\n🌍 TOP POTENTIALLY HABITABLE PLANETS:\n")
-print(res.head(10))
+eq_temp <- function(star_flux) {
+  278 * (star_flux)^(1/4)
+}
 
 # =========================================================
-# 8. VISUALIZATION (optional simple plot)
+# 7. EARTH SIMILARITY INDEX (IMPROVED)
 # =========================================================
-import matplotlib.pyplot as plt
+esi <- function(radius, mass, temp) {
 
-plt.figure(figsize=(10,5))
-plt.scatter(res["ESI"], res["HabitabilityScore"], alpha=0.6)
-plt.xlabel("Earth Similarity Index (ESI)")
-plt.ylabel("Habitability Score")
-plt.title("Exoplanet Habitability Analysis")
-plt.grid()
-plt.show()
+  r <- exp(-((radius - 1)/0.57)^2)
+  m <- exp(-((mass - 1)/1.5)^2)
+  t <- exp(-((temp - earth_temp)/75)^2)
+
+  (r * m * t)^(1/3)
+}
+
+# =========================================================
+# 8. HABITABLE ZONE SCORE
+# (1 = ideal Earth-like flux)
+# =========================================================
+hz_score <- function(flux) {
+  exp(-((flux - earth_flux)^2))
+}
+
+# =========================================================
+# 9. PROCESS DATA
+# =========================================================
+results <- df %>%
+  mutate(
+
+    # orbital distance (AU)
+    distance_au = orbital_distance(pl_orbper, st_mass),
+
+    # stellar flux
+    flux = stellar_flux(st_rad, st_teff, distance_au),
+
+    # equilibrium temperature
+    temp_model = eq_temp(flux),
+
+    # Earth Similarity Index
+    ESI = esi(pl_rade, pl_bmasse, pl_eqt),
+
+    # habitability zone score
+    HZ = hz_score(flux),
+
+    # temperature suitability
+    TempScore = exp(-abs(temp_model - earth_temp)/80),
+
+    # gravity factor (simplified)
+    GravityScore = exp(-abs(pl_bmasse/pl_rade - 1)/2),
+
+    # FINAL HABITABILITY INDEX (weighted physics model)
+    HabitabilityScore =
+      (ESI * 0.25) +
+      (HZ * 0.25) +
+      (TempScore * 0.25) +
+      (GravityScore * 0.25)
+  ) %>%
+  arrange(desc(HabitabilityScore))
+
+# =========================================================
+# 10. RESULTS
+# =========================================================
+cat("\n🌍 TOP POTENTIALLY HABITABLE PLANETS (IMPROVED MODEL):\n\n")
+
+print(results %>%
+        select(pl_name, ESI, HZ, TempScore, GravityScore, HabitabilityScore) %>%
+        head(15))
+
+# =========================================================
+# 11. VISUALIZATION
+# =========================================================
+library(ggplot2)
+
+ggplot(results, aes(x = HZ, y = HabitabilityScore)) +
+  geom_point(alpha = 0.5, color = "darkgreen") +
+  theme_minimal() +
+  labs(
+    title = "Exoplanet Habitability (Physics-Based Model)",
+    x = "Habitable Zone Score",
+    y = "Habitability Index"
+  )
