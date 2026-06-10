@@ -1,8 +1,17 @@
-############################################################
+Below is a complete R workflow that:
+Loads population points (cities, census blocks, customers, etc.)
+Runs DBSCAN to find dense population clusters.
+Runs Weighted K-Means.
+Runs K-Medoids (PAM).
+Solves a p-Median facility location problem.
+Calculates nearest-facility assignments.
+Visualizes everything interactively on a map using leaflet.
+
+###############################################
 # INFRASTRUCTURE OPTIMIZATION TOOLKIT
 # DBSCAN + Weighted KMeans + KMedoids + p-Median
 # Interactive Leaflet Map
-############################################################
+###############################################
 
 # Install packages if needed
 packages <- c(
@@ -32,10 +41,10 @@ library(ompr)
 library(ompr.roi)
 library(ROI.plugin.glpk)
 
-############################################################
+###############################################
 # EXAMPLE DATA
 # Replace with your own dataset
-############################################################
+###############################################
 
 set.seed(123)
 
@@ -48,9 +57,9 @@ cities <- data.frame(
   population = sample(1000:1000000, n, replace = TRUE)
 )
 
-############################################################
+###############################################
 # CONVERT TO SF
-############################################################
+###############################################
 
 cities_sf <- st_as_sf(
   cities,
@@ -58,9 +67,9 @@ cities_sf <- st_as_sf(
   crs = 4326
 )
 
-############################################################
+###############################################
 # DBSCAN CLUSTERING
-############################################################
+##############################################
 
 coords <- cities %>%
   select(lon, lat)
